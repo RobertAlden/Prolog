@@ -4,7 +4,7 @@ odd(N):- 0 =\= N mod 2.
 
 even(N):- 0 =:= N mod 2.
 
-:- initialization main.
+:- initialization(main).
 main :-
     iota(10,R),
     include(even, R, Result),
