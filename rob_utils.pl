@@ -5,7 +5,8 @@
                       is_factor_of/3,
                       is_odd/1,
                       is_even/1,
-                      rp/3
+                      rp/3,
+                      pack_together/2
                      ]).
 
 reverse_([]) --> [].
@@ -87,5 +88,11 @@ n_factorial_(>, N, F) :-
         F #= F0*N,
         N1 #= N - 1,
         n_factorial(N1, F0).
+
+count(L, E, N) :-
+    include(=(E), L, L2), length(L2, N).
+pack_together(Ls,Rs):-
+    maplist(count(Ls),Ls,Rs).
+
 
 % Sieve of Eratosthenes:
