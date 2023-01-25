@@ -6,11 +6,27 @@
                       is_odd/1,
                       is_even/1,
                       rp/3,
+                      fetch_file/2,
+                      palindrome/1,
+                      n_factorial/2,
+                      gcd_/3,
+                      lcm_/3,
                       pack_together/2
                      ]).
 
 reverse_([]) --> [].
 reverse_([L|Ls]) --> reverse_(Ls), [L].
+
+palindrome(X) :- phrase(reverse_(X),X).
+
+all([])     --> [].
+all([L|Ls]) --> [L], all(Ls).
+
+fetch_file(F, R):-
+    once(phrase_from_file(all(Ls), F)),
+    maplist([X,Y]>>(char_code(Y,X)),Ls,C), % this is wild.
+    string_chars(Cs,C), % what string Cs relates to the list of chars C? Prolog knows!
+    split_string(Cs, '\n', '\s\t', R). % split that string on \n, removing \s\t padding from the resulting substrings.
 
 % Is X the last item of the list Z?
 last_(X,Z) :- append(_,[X],Z).
@@ -38,7 +54,7 @@ ascending_([Z1,Z2|Zs]) :-
    Z1 #< Z2,
    ascending_([Z2|Zs]).
 
-% playing with some predicates
+% {} means clp(r) - constraint logic programming over reals
 sqrt_(X,R) :- {X = R*R}.
 
 
@@ -73,6 +89,8 @@ is_even(N) :- is_factor_of(2,N,1).
 
 is_odd(N):- not(is_even(N)).
 
+
+% help function to reify predicates.
 rp(Pred, Arg, 1) :- call(Pred, Arg).
 rp(Pred, Arg, 0) :- not(call(Pred, Arg)).
 rp(Pred, Arg, true) :- call(Pred, Arg).
@@ -89,7 +107,21 @@ n_factorial_(>, N, F) :-
         N1 #= N - 1,
         n_factorial(N1, F0).
 
+% GCD
+gcd_(Gcd,0,Gcd).
+gcd_(A,B,Gcd) :-
+    Bn #= A mod B,
+    gcd_(B,Bn,Gcd).
+
+% LCM
+lcm_(A,B,C) :-
+    gcd_(A,B,Gcd),
+    C #= A * B // Gcd.
+
 count(L, E, N) :-
     include(=(E), L, L2), length(L2, N).
+pack_together(Ls,Rs):-
+    maplist(count(Ls),Ls,Rs).
+
 
 % Sieve of Eratosthenes:
