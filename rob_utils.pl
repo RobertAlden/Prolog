@@ -91,8 +91,5 @@ n_factorial_(>, N, F) :-
 
 count(L, E, N) :-
     include(=(E), L, L2), length(L2, N).
-pack_together(Ls,Rs):-
-    maplist(count(Ls),Ls,Rs).
-
 
 % Sieve of Eratosthenes:
