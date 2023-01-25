@@ -10,7 +10,8 @@
                       palindrome/1,
                       n_factorial/2,
                       gcd_/3,
-                      lcm_/3
+                      lcm_/3,
+                      pack_together/2
                      ]).
 
 reverse_([]) --> [].
@@ -106,7 +107,6 @@ n_factorial_(>, N, F) :-
         N1 #= N - 1,
         n_factorial(N1, F0).
 
-
 % GCD
 gcd_(Gcd,0,Gcd).
 gcd_(A,B,Gcd) :-
@@ -117,4 +117,10 @@ gcd_(A,B,Gcd) :-
 lcm_(A,B,C) :-
     gcd_(A,B,Gcd),
     C #= A * B // Gcd.
+
+count(L, E, N) :-
+    include(=(E), L, L2), length(L2, N).
+pack_together(Ls,Rs):-
+    maplist(count(Ls),Ls,Rs).
+
 % Sieve of Eratosthenes:
