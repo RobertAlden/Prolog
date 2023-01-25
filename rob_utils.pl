@@ -5,13 +5,14 @@
                       is_factor_of/3,
                       is_odd/1,
                       is_even/1,
-                      rp/3,
+                      rp/2,
                       fetch_file/2,
                       palindrome/1,
                       n_factorial/2,
                       gcd_/3,
                       lcm_/3,
-                      pack_together/2
+                      pack_together/2,
+                      sieve/2
                      ]).
 
 reverse_([]) --> [].
@@ -39,8 +40,7 @@ numlist_(X,Y,Z) :-
    length(Z,S),
    nth0(0, Z, X),
    nth0(S1, Z, Y),
-   incrementing_(Z),
-   ascending_(Z).
+   incrementing_(Z).
 
 incrementing_([]).
 incrementing_([_]).
@@ -91,10 +91,11 @@ is_odd(N):- not(is_even(N)).
 
 
 % help function to reify predicates.
-rp(Pred, Arg, 1) :- call(Pred, Arg).
-rp(Pred, Arg, 0) :- not(call(Pred, Arg)).
-rp(Pred, Arg, true) :- call(Pred, Arg).
-rp(Pred, Arg, false) :- not(call(Pred, Arg)).
+rp(PredArgs, true) :- 
+    C =..[call|PredArgs], C.
+rp(PredArgs, false) :- 
+    C =..[call|PredArgs], not(C).
+
 
 % Factorial
 n_factorial(N, F) :-
@@ -123,5 +124,25 @@ count(L, E, N) :-
 pack_together(Ls,Rs):-
     maplist(count(Ls),Ls,Rs).
 
+modN0(A,B,true) :- 
+    A mod B #\= 0.
+modN0(A,B,false) :- 
+    A mod B #= 0.
 
 % Sieve of Eratosthenes:
+sieve(Lim,Ps) :-
+    numlist_(2,Lim,Ls),
+    sqrt_(Lim,Stop),
+    sieve(Ls,[],Stop,Prs),
+    phrase(reverse_(Prs),Ps).
+
+sieve([],Acc,_,Acc).
+sieve([L|Ls0],Acc,Stop,Ps) :-
+    if_(rp([<,L,Stop]), 
+        (tfilter([X]>>(modN0(X,L)),Ls0,Ls1),
+            sieve(Ls1,[L|Acc],Stop,Ps)),
+        (phrase(reverse_(Ls0),Rls),
+            append(Rls,L,Rlls),
+            append(Rlls,Acc,RLAcc),
+            sieve([],RLAcc,Stop,Ps))
+    ).
