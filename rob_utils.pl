@@ -1,5 +1,6 @@
 :- module(rob_utils, [reverse_/3,
                       last_/2,
+                      numlist_/3,
                       incrementing_/1,
                       ascending_/1,
                       is_factor_of/3,
@@ -12,7 +13,13 @@
                       gcd_/3,
                       lcm_/3,
                       pack_together/2,
-                      sieve/2
+                      sieve/2,
+                      (#>)/3,
+                      (#<)/3,
+                      (#>=)/3,
+                      (#=<)/3,
+                      mod_/3,
+                      modn_/3
                      ]).
 
 reverse_([]) --> [].
@@ -89,6 +96,31 @@ is_even(N) :- is_factor_of(2,N,1).
 
 is_odd(N):- not(is_even(N)).
 
+#<(X,Y,Truth) :- integer(X), integer(Y), !, ( X<Y -> Truth=true ; Truth=false ).
+#<(X,Y,true)  :- X #< Y.
+#<(X,Y,false) :- X #>= Y.
+
+#>(X,Y,Truth) :- integer(X), integer(Y), !, ( X>Y -> Truth=true ; Truth=false ).
+#>(X,Y,true)  :- X #> Y.
+#>(X,Y,false) :- X #=< Y.
+
+#>=(X,Y,Truth) :- integer(X), integer(Y), !, ( X>=Y -> Truth=true ; Truth=false ).
+#>=(X,Y,true)  :- X #>= Y.
+#>=(X,Y,false) :- X #< Y.
+
+#=<(X,Y,Truth) :- integer(X), integer(Y), !, ( X=<Y -> Truth=true ; Truth=false ).
+#=<(X,Y,true)  :- X #=< Y.
+#=<(X,Y,false) :- X #> Y.
+
+mod_(X,Y,Truth) :- integer(X), integer(Y), !, ( X mod Y =:= 0-> Truth=true ; Truth=false ).
+mod_(X,Y,true) :- X mod Y #= 0.
+mod_(X,Y,false) :- X mod Y #>= 0.
+
+modn_(X,Y,Truth) :- integer(X), integer(Y), !, ( X mod Y > 0-> Truth=true ; Truth=false ).
+modn_(X,Y,false) :- X mod Y #= 0.
+modn_(X,Y,true) :- X mod Y #> 0.
+
+
 
 % help function to reify predicates.
 rp(PredArgs, true) :- 
@@ -124,25 +156,17 @@ count(L, E, N) :-
 pack_together(Ls,Rs):-
     maplist(count(Ls),Ls,Rs).
 
-modN0(A,B,true) :- 
-    A mod B #\= 0.
-modN0(A,B,false) :- 
-    A mod B #= 0.
-
 % Sieve of Eratosthenes:
 sieve(Lim,Ps) :-
     numlist_(2,Lim,Ls),
     sqrt_(Lim,Stop),
-    sieve(Ls,[],Stop,Prs),
-    phrase(reverse_(Prs),Ps).
+    floor(Stop,Stopf),
+    sieve(<,Ls,Ps,Stopf).
 
-sieve([],Acc,_,Acc).
-sieve([L|Ls0],Acc,Stop,Ps) :-
-    if_(rp([<,L,Stop]), 
-        (tfilter([X]>>(modN0(X,L)),Ls0,Ls1),
-            sieve(Ls1,[L|Acc],Stop,Ps)),
-        (phrase(reverse_(Ls0),Rls),
-            append(Rls,L,Rlls),
-            append(Rlls,Acc,RLAcc),
-            sieve([],RLAcc,Stop,Ps))
-    ).
+sieve(<,[L|Ls0],[L|Acc],S) :-
+    tfilter([X]>>(modn_(X,L)),Ls0,Ls1),
+    zcompare(C,L,S),
+    sieve(C,Ls1,Acc,S).
+sieve(=,Ls1,Ls1,_).
+sieve(>,Ls1,Ls1,_).
+
