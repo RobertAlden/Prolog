@@ -1,7 +1,10 @@
+:- use_module(rob_utils, [primes/2]).
 
+pe7(N,R):-
+    Nz #= 11*N,
+    primes(Nz,P),
+    nth0(N,P,R).
 
-parse_stuff(String, term(Coeff, Pow)) :-
-    string_concat(CoeffStr, MonomialStr, String),
-    string_concat("x^", PowStr, MonomialStr),
-    number_string(Coeff, CoeffStr),
-    number_string(Pow, PowStr).
+answer:-
+    pe7(10000,R),
+    writeln(R).

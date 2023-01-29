@@ -13,13 +13,11 @@
                       gcd_/3,
                       lcm_/3,
                       pack_together/2,
-                      sieve/2,
-                      (#>)/3,
-                      (#<)/3,
-                      (#>=)/3,
-                      (#=<)/3,
+                      primes/2,
+                      is_prime/2,
                       mod_/3,
-                      modn_/3
+                      modn_/3,
+                      windowed/3
                      ]).
 
 reverse_([]) --> [].
@@ -63,7 +61,7 @@ ascending_([Z1,Z2|Zs]) :-
 
 % {} means clp(r) - constraint logic programming over reals
 sqrt_(X,R) :- {X = R*R}.
-
+psqrt_(X,R) :- {X = R*R, R >= 0}.
 
 is_factor_of(F, N, 0):- N mod F #\= 0.
 is_factor_of(F, N, 1):- N mod F #= 0.
@@ -95,22 +93,6 @@ is_prime_(N) :- has_factors(N,[1,N]).
 is_even(N) :- is_factor_of(2,N,1).
 
 is_odd(N):- not(is_even(N)).
-
-#<(X,Y,Truth) :- integer(X), integer(Y), !, ( X<Y -> Truth=true ; Truth=false ).
-#<(X,Y,true)  :- X #< Y.
-#<(X,Y,false) :- X #>= Y.
-
-#>(X,Y,Truth) :- integer(X), integer(Y), !, ( X>Y -> Truth=true ; Truth=false ).
-#>(X,Y,true)  :- X #> Y.
-#>(X,Y,false) :- X #=< Y.
-
-#>=(X,Y,Truth) :- integer(X), integer(Y), !, ( X>=Y -> Truth=true ; Truth=false ).
-#>=(X,Y,true)  :- X #>= Y.
-#>=(X,Y,false) :- X #< Y.
-
-#=<(X,Y,Truth) :- integer(X), integer(Y), !, ( X=<Y -> Truth=true ; Truth=false ).
-#=<(X,Y,true)  :- X #=< Y.
-#=<(X,Y,false) :- X #> Y.
 
 mod_(X,Y,Truth) :- integer(X), integer(Y), !, ( X mod Y =:= 0-> Truth=true ; Truth=false ).
 mod_(X,Y,true) :- X mod Y #= 0.
@@ -157,16 +139,63 @@ pack_together(Ls,Rs):-
     maplist(count(Ls),Ls,Rs).
 
 % Sieve of Eratosthenes:
-sieve(Lim,Ps) :-
-    numlist_(2,Lim,Ls),
-    sqrt_(Lim,Stop),
-    floor(Stop,Stopf),
-    sieve(<,Ls,Ps,Stopf).
+primes(N, L) :- numlist(2, N, Xs),
+            sieve(Xs, L).
 
-sieve(<,[L|Ls0],[L|Acc],S) :-
-    tfilter([X]>>(modn_(X,L)),Ls0,Ls1),
-    zcompare(C,L,S),
-    sieve(C,Ls1,Acc,S).
-sieve(=,Ls1,Ls1,_).
-sieve(>,Ls1,Ls1,_).
+sieve([H|T], [H|X]) :- H2 is H + H, 
+                       filter(H, H2, T, R),
+                       sieve(R, X).
+sieve([], []).
 
+filter(_, _, [], []).
+filter(H, H2, [H1|T], R) :- 
+    (H1 < H2 -> R = [H1|R1], filter(H, H2, T, R1);
+     H3 is H2 + H,
+    (H1 =:= H2 -> filter(H, H3, T, R);
+                  filter(H, H3, [H1|T], R)
+    )).
+
+is_prime(1,false).
+is_prime(2,true).
+is_prime(3,true).
+is_prime(5,true).
+is_prime(X,false) :- X mod 2 #= 0, X #\= 2.
+is_prime(N,T) :-
+    numlist_(2,N-1,Cl),
+    tfilter([X]>>(mod_(N,X)),Cl,Fl),
+    (length(Fl,0) -> T=true ; T=false ).
+
+prime_list(A,B,C) :-
+    numlist_(A,B,L0),
+    once(tfilter(is_prime,L0,C)).
+
+next_prime(2,3).
+next_prime(3,5).
+next_prime(X,P) :-
+    X1 #= X+1,
+    X2 #= X*2,
+    between(X1,X2,P),
+    is_prime(P,true),
+    labeling([min(1)],[P]),
+    indomain(P).
+
+windowed(L,N,R):-
+    N #> 0,
+    length(L,Ne),
+    zcompare(C,N,Ne),
+    windowed(C,L,N,R).
+windowed(<,[L|Ls],N,[Ln|Ws]):-
+    length(Ln,N),
+    append(Ln,_,[L|Ls]),
+    windowed(Ls,N,Ws).
+windowed(=,L,N,[L]):-
+    length(L,N).
+
+composite(N,true) :-
+    N #= A*_,
+    psqrt_(N,S),
+    floor(S,Sf),
+    A in 2..Sf,
+    indomain(A).
+
+composite(N,false) :- not(composite(N,true)).
