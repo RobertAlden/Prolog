@@ -1,4 +1,5 @@
 :- module(rob_utils, [reverse_/3,
+                      numlist_/3,
                       last_/2,
                       incrementing_/1,
                       ascending_/1,
