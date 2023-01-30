@@ -18,7 +18,8 @@
                       is_prime/2,
                       mod_/3,
                       modn_/3,
-                      windowed/3
+                      windowed/3,
+                      digits_/2
                      ]).
 
 reverse_([]) --> [].
@@ -192,6 +193,11 @@ windowed(<,[L|Ls],N,[Ln|Ws]):-
 windowed(=,L,N,[L]):-
     length(L,N).
 
+conv(X,Y) :- X #= Y + 48.
+digits_(St,Ds) :-
+    number_codes(St,Cs),
+    maplist(conv,Cs,Ds).
+
 composite(N,true) :-
     N #= A*_,
     psqrt_(N,S),
@@ -200,3 +206,10 @@ composite(N,true) :-
     indomain(A).
 
 composite(N,false) :- not(composite(N,true)).
+
+mi([]).
+mi([G|Gs]) :- head_body_(G, Goals, Gs), mi(Goals).
+head_body_(mi([]), Rs, Rs).
+head_body_(mi([G|Gs]), [head_body_(G,Goals,Gs), mi(Goals)|Rs], Rs).
+head_body_(head_body_(Head, Goals0, Goals), Rs, Rs) :-
+    head_body_(Head, Goals0, Goals).
