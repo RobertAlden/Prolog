@@ -35,7 +35,6 @@ is_prime_(3,true).
 is_prime_(X,true) :- 
     X mod 2 #= Z,
     X mod 3 #= Z,
-    Z #\= 0,
     (X #= 6*K+1 #\/ X #= 6*K+5),
     psqrt_(X,L),
     floor(L,Lf),
