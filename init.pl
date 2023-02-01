@@ -63,15 +63,15 @@ hooks, file_search_path/2, set_prolog_flag/2 and portray/1.
 
 %	If you prefer graphical tracing, add the line below.
 
-% :- (current_prolog_flag(gui, true) -> guitracer ; true).
+:- (current_prolog_flag(gui, true) -> guitracer ; true).
 
 %	Determine how terms are printed by the debugger and toplevel.  The
 %	values here are defaults. max_depth(10) replaces all subterms at
 %	a greater depth with elipses (...). See write_term/3 for further
 %	explanation and more options.
 
-% :- set_prolog_flag(answer_write_options,
-%		     [quoted(true), portray(true), max_depth(10)]).
+:- set_prolog_flag(answer_write_options,
+		     [quoted(true), portray(true), max_depth(20)]).
 % :- set_prolog_flag(debugger_write_options,
 %		     [quoted(true), portray(true), max_depth(10)]).
 
@@ -164,5 +164,11 @@ hooks, file_search_path/2, set_prolog_flag/2 and portray/1.
 %:- set_prolog_flag(rational_syntax,  natural).  % Write as `1/3`
 
 :- use_module(library(clpfd)).
+:- use_module(library(clpr)).
 :- use_module(library(reif)).
 :- use_module(library(theme/dark)).
+:- use_module(library(func)).
+:- use_module(library(reif_utils)).
+:- use_module(library(regex)).
+:- working_directory(_,"C:\\Users\\randy\\Documents\\GitRepos\\Prolog").
+:- set_prolog_flag(stack_limit, 4_294_967_296).
