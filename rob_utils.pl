@@ -1,5 +1,6 @@
 :- module(rob_utils, [reverse_/3,
                       numlist_/3,
+                      list_reverse/2,
                       last_/2,
                       numlist_/3,
                       incrementing_/1,
@@ -19,6 +20,7 @@
 
 reverse_([]) --> [].
 reverse_([L|Ls]) --> reverse_(Ls), [L].
+list_reverse(L,R) :- phrase(reverse_(L),R).
 
 palindrome(X) :- phrase(reverse_(X),X).
 
