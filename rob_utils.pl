@@ -1,3 +1,5 @@
+%% Catch-all utilities file until i make enough
+%% to make it worth breaking it off into a stand-alone
 :- module(rob_utils, [reverse_/3,
                       numlist_/3,
                       list_reverse/2,

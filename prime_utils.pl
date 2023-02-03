@@ -1,3 +1,4 @@
+%% Prime number utils
 :- module(prime_utils, [prime_sieve/2,
                         prime_factors/2]).
 :-table prime_sieve/2.
