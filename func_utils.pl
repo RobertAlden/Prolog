@@ -7,7 +7,7 @@
 						fold_r/4,
 						power/4,
 						commute/3,
-						op(1150, xfy, (>-)),
+						op(675, xfy, (>-)),
 						(>-)/2
 					   ]).
 :- use_module(rob_utils, [reverse_/2]).
@@ -69,5 +69,3 @@ execute_goals([Goal],Result) :-
 execute_goals([Goal|Goals], Result) :-
 	call(Goal),
 	execute_goals(Goals,Result).
-
-
