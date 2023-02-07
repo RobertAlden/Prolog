@@ -7,8 +7,8 @@
 						fold_r/4,
 						power/4,
 						commute/3,
-						op(675, xfy, (>>>)),
-						(>>>)/2
+						op(1150, xfy, (>-)),
+						(>-)/2
 					   ]).
 :- use_module(rob_utils, [reverse_/2]).
 
@@ -37,9 +37,22 @@ commute(Goal,A,B) :-
 	call(Goal,B,A).
 
 
-:- meta_predicate >>>(+,+).
-A >>> B :- 
-	process_term(A>>>B).
+:- meta_predicate >-(+,+).
+A >- B :- 
+	process_term(A>-B).
+
+xfy_list_(_, Term, [Term]):- var(Term).
+xfy_list_(Op, Term, [Left|List]) :-
+    Term =.. [Op, Left, Right],
+    xfy_list_(Op, Right, List),
+    !.
+
+process_term(Term) :- 
+	xfy_list_(>-,Term,L),
+	append([Head_term],L0,L),
+	append(L1,[Last_term],L0),
+	thread_state(L1, Goals, Head_term, Last_term),
+	once(execute_goals(Goals,_)).
 
 thread_state([], [], Out, Out).
 thread_state([F|Funcs], [Goal|Goals], In, Out) :-
@@ -47,12 +60,6 @@ thread_state([F|Funcs], [Goal|Goals], In, Out) :-
     append(Args, [In, Tmp], NewArgs),
     Goal =.. [Functor|NewArgs],
     thread_state(Funcs, Goals, Tmp, Out).
-
-xfy_list_(_, Term, [Term]):- var(Term).
-xfy_list_(Op, Term, [Left|List]) :-
-    Term =.. [Op, Left, Right],
-    xfy_list_(Op, Right, List),
-    !.
 
 execute_goals([Goal],Result) :- 
 	call(Goal),
@@ -63,9 +70,4 @@ execute_goals([Goal|Goals], Result) :-
 	call(Goal),
 	execute_goals(Goals,Result).
 
-process_term(Term) :- 
-	xfy_list_(>>>,Term,L),
-	append([Head_term],L0,L),
-	append(L1,[Last_term],L0),
-	thread_state(L1, Goals, Head_term, Last_term),
-	once(execute_goals(Goals,_)).
+
