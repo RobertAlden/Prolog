@@ -21,6 +21,4 @@ prime_factors(D,N,Acc,Fs):-
     divmod(N,D,Q,R),
     Dn #= D+1,
     N #> 1,
-    (R=0 -> prime_factors(D,Q,[D|Acc],Fs); prime_factors(Dn,N,Acc,Fs)).
-
-list_to_product(L,Product) :- foldl([X,FL,TR]>>(TR is X*FL),L,1,Product).
+    if_(R=0,prime_factors(D,Q,[D|Acc],Fs), prime_factors(Dn,N,Acc,Fs)).
