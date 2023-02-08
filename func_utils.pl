@@ -61,11 +61,8 @@ thread_state([F|Funcs], [Goal|Goals], In, Out) :-
     Goal =.. [Functor|NewArgs],
     thread_state(Funcs, Goals, Tmp, Out).
 
-execute_goals([Goal],Result) :- 
+execute_goals([Goal]) :- 
+	call(Goal).
+execute_goals([Goal|Goals]) :-
 	call(Goal),
-	Goal =.. [_|Args],
-	append(_,[Result],Args).
-
-execute_goals([Goal|Goals], Result) :-
-	call(Goal),
-	execute_goals(Goals,Result).
+	execute_goals(Goals).
