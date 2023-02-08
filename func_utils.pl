@@ -5,6 +5,8 @@
 						scan_r/4,
 						fold_/4,
 						fold_r/4,
+						reduce/3,
+						scan_/3,
 						power/4,
 						commute/3,
 						op(675, xfy, (>-)),
@@ -26,6 +28,11 @@ fold_(Goal, Acc, Li, R) :- scan_fold_(Goal, Acc, R, Li, _).
 scan_r(Goal, Acc, Li, Lo) :- scan_fold_r(Goal, Acc, _, Li, Lo).
 fold_r(Goal, Acc, Li, R) :- scan_fold_r(Goal, Acc, R, Li, _).
 
+reduce(+,Li,Lo) :- fold_(plus,0,Li,Lo).
+reduce(*,Li,Lo) :- fold_([X,Y,Z]>>(X*Y#=Z),1,Li,Lo).
+scan_(+,Li,Lo) :- scan_(plus,0,Li,Lo).
+scan_(*,Li,Lo) :- scan_([X,Y,Z]>>(X*Y#=Z),1,Li,Lo).
+
 power(0,_,R,R).
 power(N,Goal,I,O):-
 	N #> 0,
@@ -39,7 +46,7 @@ commute(Goal,A,B) :-
 
 :- meta_predicate >-(+,+).
 A >- B :- 
-	process_term(A>-B).
+	once(process_term(A>-B)).
 
 xfy_list_(_, Term, [Term]):- var(Term).
 xfy_list_(Op, Term, [Left|List]) :-
