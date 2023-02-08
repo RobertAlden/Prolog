@@ -16,7 +16,7 @@
                       mod_/3,
                       modn_/3,
                       windowed/3,
-                      digits_/2
+                      number_digits/2
                      ]).
 
 reverse_([]) --> [].
@@ -117,7 +117,15 @@ windowed(<,[L|Ls],N,[Ln|Ws]):-
 windowed(=,L,N,[L]):-
     length(L,N).
 
-conv(X,Y) :- X #= Y + 48.
+number_digits(Num,Dig) :-
+    once(digits_(Num,Dig)).
+
 digits_(St,Ds) :-
+    var(Ds),
     number_codes(St,Cs),
-    maplist(conv,Cs,Ds).
+    maplist([X,Y]>>(X #= Y + 48),Cs,Ds).
+digits_(St,Ds) :-
+    var(St),
+    maplist([X,Y]>>(X #= Y + 48),Cs,Ds),
+    number_codes(St,Cs).
+    
