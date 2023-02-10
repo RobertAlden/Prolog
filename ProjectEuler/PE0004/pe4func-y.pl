@@ -3,7 +3,7 @@
 :- use_module(prime_utils).
 
 pe_4(S,E,R):-
-    numlist_(S,E,Nl),
+    range(S,E,Nl),
     findall([A,B], (dif(A,B),member(A,Nl),member(B,Nl)), Cpl),
     Cpl>-maplist(reduce(*))>-
     maplist(number_digits)>-

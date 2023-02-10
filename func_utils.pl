@@ -6,7 +6,7 @@
 						fold_/4,
 						fold_r/4,
 						reduce/3,
-						scan_/3,
+						scan/3,
 						power/4,
 						commute/3,
 						rotate/3,
@@ -31,8 +31,8 @@ fold_r(Goal, Acc, Li, R) :- scan_fold_r(Goal, Acc, R, Li, _).
 
 reduce(+,Li,Lo) :- fold_(plus,0,Li,Lo).
 reduce(*,Li,Lo) :- fold_([X,Y,Z]>>(X*Y#=Z),1,Li,Lo).
-scan_(+,Li,Lo) :- scan_(plus,0,Li,Lo).
-scan_(*,Li,Lo) :- scan_([X,Y,Z]>>(X*Y#=Z),1,Li,Lo).
+scan(+,Li,Lo) :- scan_(plus,0,Li,Lo).
+scan(*,Li,Lo) :- scan_([X,Y,Z]>>(X*Y#=Z),1,Li,Lo).
 
 power(0,_,R,R).
 power(N,Goal,I,O):-
@@ -50,7 +50,7 @@ rotate(R,Li,Rl):-
 	N #= R mod X,
 	NX #= -X,
 	N in NX..X,
-	labeling([],[N]),
+	labeling([enum],[N]),
 	zcompare(C,N,0),
 	rotate(C,N,Li,Rl).
 rotate(>,N,Li,Rl) :-
@@ -71,7 +71,7 @@ rotate(<,N,Li,Rl) :-
 
 :- meta_predicate >-(+,+).
 A >- B :- 
-	once(process_term(A>-B)).
+	process_term(A>-B).
 
 xfy_list_(_, Term, [Term]):- var(Term).
 xfy_list_(Op, Term, [Left|List]) :-
@@ -84,7 +84,7 @@ process_term(Term) :-
 	append([Head_term],L0,L),
 	append(L1,[Last_term],L0),
 	thread_state(L1, Goals, Head_term, Last_term),
-	once(execute_goals(Goals)).
+	execute_goals(Goals).
 
 thread_state([], [], Out, Out).
 thread_state([F|Funcs], [Goal|Goals], In, Out) :-
@@ -93,8 +93,7 @@ thread_state([F|Funcs], [Goal|Goals], In, Out) :-
     Goal =.. [Functor|NewArgs],
     thread_state(Funcs, Goals, Tmp, Out).
 
-execute_goals([Goal]) :- 
-	call(Goal).
+execute_goals([]).
 execute_goals([Goal|Goals]) :-
 	call(Goal),
 	execute_goals(Goals).
