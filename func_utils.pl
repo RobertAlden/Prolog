@@ -9,6 +9,7 @@
 						scan_/3,
 						power/4,
 						commute/3,
+						rotate/3,
 						op(675, xfy, (>-)),
 						(>-)/2
 					   ]).
@@ -43,6 +44,30 @@ power(N,Goal,I,O):-
 commute(Goal,A,B) :-
 	call(Goal,B,A).
 
+rotate(R,Li,Rl):-
+	length(Li,X),
+	length(Rl,X),
+	N #= R mod X,
+	NX #= -X,
+	N in NX..X,
+	labeling([],[N]),
+	zcompare(C,N,0),
+	rotate(C,N,Li,Rl).
+rotate(>,N,Li,Rl) :-
+	length(Fr,N),
+	append(Fr,Bck,Li),
+	append(Bck,Fr,Rl).
+rotate(=,0,Li,Li).
+rotate(<,N,Li,Rl) :-
+	length(Li,X),
+	length(Rl,X),
+	Y #= X + N,
+	zcompare(C,Y,0),
+	rotate(C,Y,Li,Rl).
+
+
+
+
 
 :- meta_predicate >-(+,+).
 A >- B :- 
@@ -59,7 +84,7 @@ process_term(Term) :-
 	append([Head_term],L0,L),
 	append(L1,[Last_term],L0),
 	thread_state(L1, Goals, Head_term, Last_term),
-	once(execute_goals(Goals,_)).
+	once(execute_goals(Goals)).
 
 thread_state([], [], Out, Out).
 thread_state([F|Funcs], [Goal|Goals], In, Out) :-
