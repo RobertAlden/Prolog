@@ -16,7 +16,7 @@ fib_sequence(First, Last, Seq) :-
 even(N):- N mod 2 #= 0.
 
 answer:-
-    60>-fib_sequence(1)>-
-    include([X]>>(X<4000000))>-include(even)>-
-    reduce(+)>-Result,
+    60~>fib_sequence(1)~>
+    include([X]>>(X<4000000))~>include(even)~>
+    reduce(+)~>Result,
     writeln(Result).

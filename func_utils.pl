@@ -10,8 +10,8 @@
 						power/4,
 						commute/3,
 						rotate/3,
-						op(675, xfy, (>-)),
-						(>-)/2
+						op(675, xfy, (~>)),
+						(~>)/2
 					   ]).
 :- use_module(rob_utils, [reverse_/2]).
 
@@ -69,9 +69,9 @@ rotate(<,N,Li,Rl) :-
 
 
 
-:- meta_predicate >-(+,+).
-A >- B :- 
-	process_term(A>-B).
+:- meta_predicate ~>(+,+).
+A ~> B :- 
+	once(process_term(A~>B)).
 
 xfy_list_(_, Term, [Term]):- var(Term).
 xfy_list_(Op, Term, [Left|List]) :-
@@ -80,7 +80,7 @@ xfy_list_(Op, Term, [Left|List]) :-
     !.
 
 process_term(Term) :- 
-	xfy_list_(>-,Term,L),
+	xfy_list_(~>,Term,L),
 	append([Head_term],L0,L),
 	append(L1,[Last_term],L0),
 	thread_state(L1, Goals, Head_term, Last_term),

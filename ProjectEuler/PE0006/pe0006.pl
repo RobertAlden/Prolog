@@ -1,7 +1,8 @@
-:- use_module(rob_utils, [numlist_/3]).
+:- use_module(rob_utils).
+:- use_module(func_utils).
 
 pe6(Limit,Result):-
-    numlist_(1,Limit,L),
+    naturals(Limit,L),
     maplist([X,Y]>>(Y #= X*X),L,L0),
     sum_list(L0,SuSq),
     sum_list(L,Su),
