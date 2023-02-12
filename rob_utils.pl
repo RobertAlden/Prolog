@@ -7,7 +7,7 @@
     naturals/2,
     reverse_/2,
     last_/2,
-    incrementing_/4,
+    incrementing_/2,
     ascending_/1,
     rp/2,
     fetch_file/2,

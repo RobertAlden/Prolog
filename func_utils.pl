@@ -46,8 +46,10 @@ commute(Goal,A,B) :-
 	call(Goal,B,A).
 
 involution(Goal,A) :-
-	call(Goal,A,X),
-	call(Goal,X,A).
+	call(Goal,A,B),
+	call(Goal,C,D),
+	B #= C,
+	A #= D.
 
 rotate(R,Li,Rl) :-
 	length(Li,X),
