@@ -9,6 +9,7 @@
 						scan/3,
 						power/4,
 						commute/3,
+						involution/2,
 						rotate/3,
 						op(675, xfy, (~>)),
 						(~>)/2
@@ -16,11 +17,11 @@
 :- use_module(rob_utils, [reverse_/2]).
 
 scan_fold_(_, Acc, Acc, [], []).
-scan_fold_(Goal, Acc, R, [I|Li], [AccN|Lo]):-
+scan_fold_(Goal, Acc, R, [I|Li], [AccN|Lo]) :-
 	call(Goal, Acc, I, AccN),
 	scan_fold_(Goal, AccN, R, Li, Lo).
 
-scan_fold_r(Goal, Acc, O, Li, Lo):-
+scan_fold_r(Goal, Acc, O, Li, Lo) :-
 	reverse_(Li,LiR),
 	scan_fold_(Goal, Acc, O, LiR, Lo).
 	
@@ -35,7 +36,7 @@ scan(+,Li,Lo) :- scan_(plus,0,Li,Lo).
 scan(*,Li,Lo) :- scan_([X,Y,Z]>>(X*Y#=Z),1,Li,Lo).
 
 power(0,_,R,R).
-power(N,Goal,I,O):-
+power(N,Goal,I,O) :-
 	N #> 0,
 	Nn #= N - 1,
 	call(Goal,I,X),
@@ -44,7 +45,11 @@ power(N,Goal,I,O):-
 commute(Goal,A,B) :-
 	call(Goal,B,A).
 
-rotate(R,Li,Rl):-
+involution(Goal,A) :-
+	call(Goal,A,X),
+	call(Goal,X,A).
+
+rotate(R,Li,Rl) :-
 	length(Li,X),
 	length(Rl,X),
 	N #= R mod X,
@@ -73,7 +78,7 @@ rotate(<,N,Li,Rl) :-
 A ~> B :- 
 	once(process_term(A~>B)).
 
-xfy_list_(_, Term, [Term]):- var(Term).
+xfy_list_(_, Term, [Term]) :- var(Term).
 xfy_list_(Op, Term, [Left|List]) :-
     Term =.. [Op, Left, Right],
     xfy_list_(Op, Right, List),

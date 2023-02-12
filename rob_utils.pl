@@ -7,7 +7,7 @@
     naturals/2,
     reverse_/2,
     last_/2,
-    incrementing_/2,
+    incrementing_/4,
     ascending_/1,
     rp/2,
     fetch_file/2,
@@ -44,13 +44,12 @@ last_(X,Z) :- append(_,[X],Z).
 range(X,Y,Z) :-
     step_range(1,X,Y,Z).
 
-step_range(Step,X,Y,Z) :- 
+step_range(Step,X,Y,[X|Z]) :- 
    X #=< Y,
    S #= (Y - X + Step) // Step,
-   S1 is ceiling(S),
+   S1 #= S - 1,
    length(Z,S1),
-   nth0(0, Z, X),
-   incrementing_(Step,Z).
+   incrementing_(Step,[X|Z]).
 
 naturals(N,L):-
     range(1,N,L).
