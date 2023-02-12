@@ -6,8 +6,8 @@ factor(N, I, false):- I mod N #\= 0.
 
 pe1(Fs, N, R):-
     numlist(1, N, L0),
-    Fs>-maplist([X]>>(tfilter(factor(X),L0)))>-
-    fold_(union, [])>-reduce(+)>-R.
+    Fs~>maplist([X]>>(tfilter(factor(X),L0)))~>
+    fold_(union, [])~>reduce(+)~>R.
 
 answer:-
     pe1([3,5],999,O),

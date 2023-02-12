@@ -3,4 +3,4 @@
 
 pe16(Ex,R) :-
 	X #= 2^Ex,
-	X>-number_digits>-reduce(+)>-R.
+	X~>number_digits~>reduce(+)~>R.
