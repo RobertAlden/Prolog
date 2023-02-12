@@ -1,6 +1,7 @@
 %% Catch-all utilities file until i make enough
 %% to make it worth breaking it off into a stand-alone
 :- module(rob_utils, [range/3,
+                      naturals/2,
                       reverse_/2,
                       last_/2,
                       incrementing_/1,
@@ -45,6 +46,9 @@ range(X,Y,Z) :-
    nth0(0, Z, X),
    nth0(S1, Z, Y),
    incrementing_(Z).
+
+naturals(N,L):-
+    range(1,N,L).
 
 incrementing_([]).
 incrementing_([_]).
