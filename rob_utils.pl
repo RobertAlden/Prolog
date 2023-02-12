@@ -1,23 +1,26 @@
 %% Catch-all utilities file until i make enough
 %% to make it worth breaking it off into a stand-alone
-:- module(rob_utils, [range/3,
-                      naturals/2,
-                      reverse_/2,
-                      last_/2,
-                      incrementing_/1,
-                      ascending_/1,
-                      rp/2,
-                      fetch_file/2,
-                      palindrome/1,
-                      n_factorial/2,
-                      gcd_/3,
-                      lcm_/3,
-                      pack_together/2,
-                      mod_/3,
-                      modn_/3,
-                      windowed/3,
-                      number_digits/2
-                     ]).
+:- module(rob_utils, 
+    [
+    range/3,
+    step_range/4,
+    naturals/2,
+    reverse_/2,
+    last_/2,
+    incrementing_/2,
+    ascending_/1,
+    rp/2,
+    fetch_file/2,
+    palindrome/1,
+    n_factorial/2,
+    gcd_/3,
+    lcm_/3,
+    psqrt_/2,
+    mod_/3,
+    modn_/3,
+    windowed/3,
+    number_digits/2
+    ]).
 
 reverse_([]) --> [].
 reverse_([L|Ls]) --> reverse_(Ls), [L].
@@ -38,23 +41,25 @@ fetch_file(F, R):-
 last_(X,Z) :- append(_,[X],Z).
 
 % Rewrote numlist to be reversible.
-range(X,Y,Z) :- 
+range(X,Y,Z) :-
+    step_range(1,X,Y,Z).
+
+step_range(Step,X,Y,Z) :- 
    X #=< Y,
-   S #= Y - X + 1,
-   S1 #= Y - X,
-   length(Z,S),
+   S #= (Y - X + Step) // Step,
+   S1 is ceiling(S),
+   length(Z,S1),
    nth0(0, Z, X),
-   nth0(S1, Z, Y),
-   incrementing_(Z).
+   incrementing_(Step,Z).
 
 naturals(N,L):-
     range(1,N,L).
 
-incrementing_([]).
-incrementing_([_]).
-incrementing_([Z1,Z2|Zs]) :- 
-   Z2 #= Z1 + 1,
-   incrementing_([Z2|Zs]).
+incrementing_(_,[]).
+incrementing_(_,[_]).
+incrementing_(Step,[Z1,Z2|Zs]) :- 
+   Z2 #= Z1 + Step,
+   incrementing_(Step,[Z2|Zs]).
 
 ascending_([]).
 ascending_([_]).
@@ -108,16 +113,16 @@ count(L, E, N) :-
 pack_together(Ls,Rs):-
     maplist(count(Ls),Ls,Rs).
 
-windowed(L,N,R):-
+windowed(N,L,R):-
     N #> 0,
     length(L,Ne),
     zcompare(C,N,Ne),
-    windowed(C,L,N,R).
-windowed(<,[L|Ls],N,[Ln|Ws]):-
+    windowed(C,N,L,R).
+windowed(<,N,[L|Ls],[Ln|Ws]):-
     length(Ln,N),
     append(Ln,_,[L|Ls]),
-    windowed(Ls,N,Ws).
-windowed(=,L,N,[L]):-
+    windowed(N,Ls,Ws).
+windowed(=,N,L,[L]):-
     length(L,N).
 
 number_digits(Num,Dig) :-

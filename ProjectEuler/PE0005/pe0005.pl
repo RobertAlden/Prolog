@@ -1,8 +1,8 @@
-:- use_module(rob_utils, [numlist_/3, lcm_/3]).
+:- use_module(rob_utils).
+:- use_module(func_utils).
 
 pe5(Limit, Result) :-
-    numlist_(1,Limit, L),
-    foldl(lcm_, L, 1, Result).
+    Limit~>naturals~>fold_(lcm_, 1)~>Result.
 
 answer :-
     pe5(20,R),
