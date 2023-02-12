@@ -94,6 +94,8 @@ thread_state([F|Funcs], [Goal|Goals], In, Out) :-
     thread_state(Funcs, Goals, Tmp, Out).
 
 execute_goals([]).
+execute_goals([Goal]) :- 
+	call(Goal).
 execute_goals([Goal|Goals]) :-
 	call(Goal),
 	execute_goals(Goals).
