@@ -3,5 +3,5 @@
 
 pe16(Ex,R) :-
 	X #= 2^Ex,
-	digits_(X,Dx),
+	number_digits(X,Dx),
 	fold_(plus,0,Dx,R).

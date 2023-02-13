@@ -1,4 +1,4 @@
-:- use_module(rob_utils, [numlist_/3, reverse_/3]).
+:- use_module(rob_utils).
 :- table collatz_next/2.
 :- table collatz/2.
 :- table collatz/3.
@@ -22,8 +22,8 @@ collatz(>,N0,[N0|Cl]) :-
 collatz(=,1,[1]).
 
 pe14(A,B,R) :-
-    numlist_(A,B,L0),
-    phrase(reverse_(L0),L1),
+    range(A,B,L0),
+    reverse_(L0,L1),
     maplist(collatz,L1,L2), 
     maplist(length,L2,L3),
     max_list(L3,M),

@@ -14,7 +14,7 @@
 						op(675, xfy, (~>)),
 						(~>)/2
 					   ]).
-:- use_module(rob_utils, [reverse_/2]).
+:- use_module(rob_utils).
 
 scan_fold_(_, Acc, Acc, [], []).
 scan_fold_(Goal, Acc, R, [I|Li], [AccN|Lo]) :-
@@ -72,13 +72,18 @@ rotate(<,N,Li,Rl) :-
 	zcompare(C,Y,0),
 	rotate(C,Y,Li,Rl).
 
-
-
-
-
 :- meta_predicate ~>(+,+).
 A ~> B :- 
+	ground(A),
 	once(process_term(A~>B)).
+
+A ~> B :- 
+	callable(A),
+	A =.. [Functor|Args],
+	append(Args,[Res],NewArgs),
+	Goal =.. [Functor|NewArgs],
+	call(Goal),
+	once(process_term(Res~>B)).
 
 xfy_list_(_, Term, [Term]) :- var(Term).
 xfy_list_(Op, Term, [Left|List]) :-
@@ -94,6 +99,13 @@ process_term(Term) :-
 	execute_goals(Goals).
 
 thread_state([], [], Out, Out).
+
+thread_state([F], [Goal], Tmp, Out) :-
+    F =.. [Functor|[]],
+    append([], [Tmp], NewArgs),
+    Goal =.. [Functor|NewArgs],
+    thread_state([], [], Tmp, Out).
+
 thread_state([F|Funcs], [Goal|Goals], In, Out) :-
     F =.. [Functor|Args],
     append(Args, [In, Tmp], NewArgs),
@@ -101,8 +113,6 @@ thread_state([F|Funcs], [Goal|Goals], In, Out) :-
     thread_state(Funcs, Goals, Tmp, Out).
 
 execute_goals([]).
-execute_goals([Goal]) :- 
-	call(Goal).
 execute_goals([Goal|Goals]) :-
 	call(Goal),
 	execute_goals(Goals).

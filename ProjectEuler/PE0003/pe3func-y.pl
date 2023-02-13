@@ -2,5 +2,5 @@
 :- use_module(func_utils).
 :- use_module(prime_utils).
 answer:-
-    600851475143~>prime_factors~>max_list~>Result,
+    prime_factors(600851475143)~>max_list~>Result,
     writeln(Result).

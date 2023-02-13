@@ -2,5 +2,5 @@
 :- use_module(func_utils).
 
 pe20(X,R) :-
-    X>-n_factorial>-number_digits>-reduce(+)>-R.
+    n_factorial(X)~>number_digits~>reduce(+)~>R.
 

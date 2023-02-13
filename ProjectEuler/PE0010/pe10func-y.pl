@@ -3,5 +3,5 @@
 :- use_module(func_utils).
 
 answer:-
-    2_000_000~>prime_sieve~>reduce(+)~>Sum,
+    prime_sieve(2_000_000)~>reduce(+)~>Sum,
     writeln(Sum).
