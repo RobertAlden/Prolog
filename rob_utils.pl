@@ -16,6 +16,7 @@
     gcd_/3,
     lcm_/3,
     psqrt_/2,
+    isqrt/2,
     mod_/3,
     modn_/3,
     windowed/3,
@@ -63,13 +64,27 @@ incrementing_(Step,[Z1,Z2|Zs]) :-
 ascending_([]).
 ascending_([_]).
 ascending_([Z1,Z2|Zs]) :- 
-   Z1 #< Z2,
+   Z1 #=< Z2,
    ascending_([Z2|Zs]).
 
 % {} means clp(r) - constraint logic programming over reals
 sqrt_(X,R) :- {X = R*R}.
 psqrt_(X,R) :- {X = R*R, R >= 0}.
 
+isqrt(N, _) :-
+    N < 0, !, fail. 
+isqrt(N, N) :-
+    N < 2.
+isqrt(N, R) :-
+    X is N,
+    Y is (N // 2),
+    once(isqrt(N, X, Y, R)).
+
+isqrt(_, X, Y, X) :- 
+    Y >= X.
+isqrt(N, _, Y, R) :-
+    Z is ((Y + N // Y) // 2),
+    isqrt(N, Y, Z, R).
 
 mod_(X,Y,Truth) :- integer(X), integer(Y), !, ( X mod Y =:= 0-> Truth=true ; Truth=false ).
 mod_(X,Y,true) :- X mod Y #= 0.

@@ -74,16 +74,17 @@ rotate(<,N,Li,Rl) :-
 
 :- meta_predicate ~>(+,+).
 A ~> B :- 
-	ground(A),
-	once(process_term(A~>B)).
-
-A ~> B :- 
 	callable(A),
 	A =.. [Functor|Args],
 	append(Args,[Res],NewArgs),
 	Goal =.. [Functor|NewArgs],
 	call(Goal),
 	once(process_term(Res~>B)).
+
+A ~> B :- 
+	ground(A),
+	\+ callable(A),
+	once(process_term(A~>B)).
 
 xfy_list_(_, Term, [Term]) :- var(Term).
 xfy_list_(Op, Term, [Left|List]) :-
@@ -102,9 +103,8 @@ thread_state([], [], Out, Out).
 
 thread_state([F], [Goal], Tmp, Out) :-
     F =.. [Functor|[]],
-    append([], [Tmp], NewArgs),
-    Goal =.. [Functor|NewArgs],
-    thread_state([], [], Tmp, Out).
+    Goal =.. [Functor,Tmp,Out],
+	current_functor(Functor, 2).
 
 thread_state([F|Funcs], [Goal|Goals], In, Out) :-
     F =.. [Functor|Args],
